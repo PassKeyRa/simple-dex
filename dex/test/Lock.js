@@ -5,25 +5,33 @@ const {
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-describe("Lock", function () {
-  // We define a fixture to reuse the same setup in every test.
-  // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshot in every test.
-  async function deployOneYearLockFixture() {
-    const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-    const ONE_GWEI = 1_000_000_000;
+describe("DEX", function () {
+  async function deployDEX() {
+    const [owner, user1, user2] = await ethers.getSigners();
+    const DEX = await ethers.getContractFactory("DEX");
+    const dex = await DEX.deploy();
 
-    const lockedAmount = ONE_GWEI;
-    const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
+    const ERC20Mock = await ethers.getContractFactory("ERC20Mock.sol");
+    const dai = await ERC20Mock.deploy("DAI stablecoin", "DAI");
+    const mtk = await ERC20Mock.deploy("My Token", "MTK");
+    const atk = await ERC20Mock.deploy("Any Token", "ATK");
+    
+    await dai.mint(owner.address, "1000000");
+    await dai.mint(user1.address, "1000000");
+    await dai.mint(user2.address, "1000000");
 
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners();
+    await mtk.mint(user1.address, "1000000");
+    await atk.mint(user2.address, "1000000");
 
-    const Lock = await ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-    return { lock, unlockTime, lockedAmount, owner, otherAccount };
+    return { owner, user1, user2, dex, dai, mtk, atk};
   }
+
+  describe("Owner functions", function () {
+    it("Should add new pair MTKDAI", async function() {
+      const { dex, mtk, dai } = await loadFixture(deployDEX());
+      
+    });
+  });
 
   describe("Deployment", function () {
     it("Should set the right unlockTime", async function () {
