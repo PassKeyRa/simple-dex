@@ -7,8 +7,8 @@ interface IDEXStructs {
     struct Order {
         uint id;
         string pair_name;
-        uint first_token_amount;
-        uint second_token_amount;
+        uint amount;
+        uint price;
         address creator;
         OrderType orderType;
     }
@@ -16,7 +16,6 @@ interface IDEXStructs {
     struct Pair {
         address first_token_addr;
         address second_token_addr;
-        uint first_token_decimals;
-        uint second_token_decimals;
+        uint price_decimals;
     }
 }
