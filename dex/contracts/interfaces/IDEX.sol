@@ -15,7 +15,6 @@ interface IDEX is IDEXStructs {
     // view functions
     function fetchPairs() external view returns(string[] memory);
     function getPair(string calldata pair_name) external view returns(Pair memory);
-    function balanceOf(address token) external view returns(uint);
 
     function fetchBuyOrders(string calldata pair_name) external view returns(Order[] memory);
     function fetchSellOrders(string calldata pair_name) external view returns(Order[] memory);

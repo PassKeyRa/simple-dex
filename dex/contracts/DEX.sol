@@ -89,8 +89,8 @@ contract DEX is IDEX, IAccount, Ownable {
         return Pairs[pair_name];
     }
 
-    function balanceOf(address token) external view returns(uint) {
-        return _countBalance(token, msg.sender);
+    function balanceOf(address token, address user) external view returns(uint) {
+        return _countBalance(token, user);
     }
 
     function fetchBuyOrders(string calldata pair_name) external view returns(Order[] memory) {
@@ -150,8 +150,9 @@ contract DEX is IDEX, IAccount, Ownable {
 
     function buyOrderLimit(string calldata pair_name, uint amount, uint price) external pairExists(pair_name){
         Pair storage p = Pairs[pair_name];
-        require(_countBalance(p.second_token_addr, msg.sender) >= amount, "Insufficient unlocked balance");
-        lockedBalances[p.second_token_addr][msg.sender] += amount;
+        uint spentAmount = (amount * price) / (10 ** p.price_decimals);
+        require(_countBalance(p.second_token_addr, msg.sender) >= spentAmount, "Insufficient unlocked balance");
+        lockedBalances[p.second_token_addr][msg.sender] += spentAmount;
         last_order_id++;
         Order[] storage orderList = PairOrders[pair_name][OrderType.BUY];
         orderList.push(Order({
