@@ -7,7 +7,7 @@ const { expect } = require("chai");
 
 describe("DEX", function () {
   async function deployDEX() {
-    const [owner, user1, user2] = await ethers.getSigners();
+    const [owner, user1, user2, user3] = await ethers.getSigners();
     const DEX = await ethers.getContractFactory("DEX");
     const dex = await DEX.deploy();
 
@@ -19,11 +19,13 @@ describe("DEX", function () {
     await dai.mint(owner.address, "1000000");
     await dai.mint(user1.address, "1000000");
     await dai.mint(user2.address, "1000000");
+    await dai.mint(user3.address, "1000000");
 
     await mtk.mint(user1.address, "1000000");
     await atk.mint(user2.address, "1000000");
+    await atk.mint(user3.address, "1000000");
 
-    return { owner, user1, user2, dex, dai, mtk, atk};
+    return { owner, user1, user2, user3, dex, dai, mtk, atk};
   }
 
   describe("Owner and user functions", function () {
@@ -142,8 +144,9 @@ describe("DEX", function () {
       let data = await loadFixture(deployDEX);
       dex = data.dex; mtk = data.mtk; dai = data.dai;
       atk = data.atk; user1 = data.user1; user2 = data.user2;
+      user3 = data.user3;
       await dex.addPair("MTKDAI", mtk.address, dai.address, "2");
-      await dex.addPair("ATKDAI", atk.address, atk.address, "2");
+      await dex.addPair("ATKDAI", atk.address, dai.address, "2");
       await dex.addPair("MTKATK", mtk.address, atk.address, "4");
 
       await dai.connect(user1).approve(dex.address, "1000000");
@@ -155,13 +158,70 @@ describe("DEX", function () {
       await dex.connect(user1).deposit(mtk.address, "1000000");
       await dex.connect(user2).deposit(atk.address, "1000000");
 
+      await dai.connect(user3).approve(dex.address, "1000000");
+      await atk.connect(user3).approve(dex.address, "1000000");
+      await dex.connect(user3).deposit(dai.address, "1000000");
+      await dex.connect(user3).deposit(atk.address, "1000000");
+
       for (var i = 0; i < 10; i++) {
-        await dex.connect(user1).sellOrderLimit("MTKDAI", "137", i * 1000 + 1337);
-        await dex.connect(user2).buyOrderLimit("MTKDAI", "137", i * 137 + 1337);
-        await dex.connect(user1).buyOrderLimit("ATKDAI", "123", i * 13 + 1234);
+        await dex.connect(user1).sellOrderLimit("MTKDAI", "137", i * 133 + 1337);
+        await dex.connect(user2).buyOrderLimit("MTKDAI", "137", i * 133 + 1337);
+        await dex.connect(user1).buyOrderLimit("ATKDAI", "123", i * 133 + 1234);
       }
+      await dex.connect(user1).sellOrderLimit("MTKDAI", "1000", "1000");
+      await dex.connect(user2).buyOrderLimit("MTKDAI", "1000", "10000");
     });
 
+    it("[MTKDAI, ATKDAI] user3 executes 4 market orders", async function() {
+      var balanceMTK1 = await dex.balanceOf(mtk.address, user3.address);
+      await expect(balanceMTK1).be.equal(0);
+      await dex.connect(user3).buyOrderMarket("MTKDAI", "137");
+      balanceMTK1 = await dex.balanceOf(mtk.address, user3.address);
+      await expect(balanceMTK1).be.equal(137);
+      var balanceDAI1 = await dex.balanceOf(dai.address, user3.address);
+      await expect(balanceDAI1).be.equal(1000000 - 1370);
 
+      var ordersMTKDAI = await dex.fetchSellOrders("MTKDAI");
+      await expect(ordersMTKDAI.length).be.equal(11);
+      await expect(ordersMTKDAI[10].amount).be.equal(863);
+
+      await dex.connect(user3).buyOrderMarket("MTKDAI", "900");
+      balanceMTK1 = await dex.balanceOf(mtk.address, user3.address);
+      await expect(balanceMTK1).be.equal(1037);
+      balanceDAI1 = await dex.balanceOf(dai.address, user3.address);
+      await expect(balanceDAI1).be.equal(1000000 - 10000 - 494);
+
+      ordersMTKDAI = await dex.fetchSellOrders("MTKDAI");
+      await expect(ordersMTKDAI.length).be.equal(10);
+      await expect(ordersMTKDAI[9].amount).be.equal(100);
+
+
+      await dex.connect(user3).sellOrderMarket("MTKDAI", "900");
+      balanceMTK1 = await dex.balanceOf(mtk.address, user3.address);
+      await expect(balanceMTK1).be.equal(137);
+      balanceDAI1 = await dex.balanceOf(dai.address, user3.address);
+      await expect(balanceDAI1).be.equal(1000000 - 10000 - 494 + 90000);
+
+      ordersMTKDAI = await dex.fetchBuyOrders("MTKDAI");
+      await expect(ordersMTKDAI.length).be.equal(11);
+      await expect(ordersMTKDAI[10].amount).be.equal(100);
+
+      await dex.connect(user3).sellOrderMarket("MTKDAI", "137");
+      balanceMTK1 = await dex.balanceOf(mtk.address, user3.address);
+      await expect(balanceMTK1).be.equal(0);
+      balanceDAI1 = await dex.balanceOf(dai.address, user3.address);
+      await expect(balanceDAI1).be.equal(1000000 - 10000 - 494 + 90000 + 10000 + 937);
+
+      ordersMTKDAI = await dex.fetchBuyOrders("MTKDAI");
+      await expect(ordersMTKDAI.length).be.equal(10);
+      await expect(ordersMTKDAI[9].amount).be.equal(100);
+    });
+
+    it("[ATKDAI, MTKDAI, MTKATK] execute a bit market order and check that everything is ok", async function() {
+      await dex.connect(user3).buyOrderMarket("MTKDAI", "3000");
+      var ordersMTKDAI = await dex.fetchSellOrders("MTKDAI");
+      await expect(ordersMTKDAI.length).be.equal(0);
+      await expect((await dex.balanceOf(mtk.address, user3.address))).be.equal(2370);
+    })
   });
 });

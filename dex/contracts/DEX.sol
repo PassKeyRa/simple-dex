@@ -140,6 +140,10 @@ contract DEX is IDEX, IAccount, Ownable {
 
             emit OrderCompleted(o.id, pair_name, msg.sender, o.creator, amount_, o.price);
 
+            if (o.amount > amount_) {
+                o.amount -= amount_;
+                break;
+            }
             delete AllOrders[o.id];
             orderList.pop();
             ordersLength--;
@@ -205,6 +209,10 @@ contract DEX is IDEX, IAccount, Ownable {
 
             emit OrderCompleted(o.id, pair_name, o.creator, msg.sender, amount_, o.price);
 
+            if (o.amount > amount_) {
+                o.amount -= amount_;
+                break;
+            }
             delete AllOrders[o.id];
             orderList.pop();
             ordersLength--;
