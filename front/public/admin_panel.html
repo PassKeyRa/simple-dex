@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Amazing DEX</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-left">
+        <a>
+          <img src="img/logo_120.png" />
+        </a>
+        <a class="project-name">Amazing DEX</a>
+      </div>
+
+      <div class="header-right">
+        <a class="active" href="somewhere">Giga Admin</a>
+        <a class="active" href="somewhere">Virgin User</a>
+        <a
+          class="active-connect"
+          onclick="connectMetamask()"
+          id="connect_button"
+          >Connect Metamask</a
+        >
+      </div>
+    </div>
+
+    <div class="main-column">
+      <div class="container">
+        <h1><strong>Add new token pair</strong></h1>
+        <h2>First token</h2>
+        <div class="row">
+          <div class="column left">
+            <h3>Name</h3>
+          </div>
+          <input
+            type="name"
+            placeholder="name here"
+            class="column right"
+            required
+          />
+        </div>
+        <div class="row">
+          <div class="column left">
+            <h3>Address</h3>
+          </div>
+          <input
+            type="address"
+            placeholder="address here"
+            class="column right"
+            required
+          />
+        </div>
+
+        <h2>Second token</h2>
+        <div class="row">
+          <div class="column left">
+            <h3>Name</h3>
+          </div>
+          <input
+            type="name"
+            placeholder="name here"
+            class="column right"
+            required
+          />
+        </div>
+        <div class="row">
+          <div class="column left">
+            <h3>Address</h3>
+          </div>
+          <input
+            type="address"
+            placeholder="address here"
+            class="column right"
+            required
+          />
+        </div>
+        <button class="fancy-btn">Add new pair</button>
+      </div>
+
+      <div class="container">
+        <h1>Delete token pair</h1>
+        <div class="row">
+          <div class="column left">
+            <h3>Choose pair</h3>
+          </div>
+          <div class="column right dropdown">
+            <button class="dropbtn">Choose me right here</button>
+            <div class="dropdown-content">
+              <a>Pair 1</a>
+              <a>Pair 2</a>
+              <a>Pair 3</a>
+            </div>
+          </div>
+        </div>
+        <button class="fancy-btn">Delete chosen pair</button>
+      </div>
+    </div>
+  </body>
+</html>
