@@ -21,6 +21,7 @@ contract DEX is IDEX, IAccount, Ownable {
     string[] private PairsList;
 
     mapping (string => mapping (OrderType => Order[])) private PairOrders;
+    mapping (uint => Order) private AllOrders;
 
     uint private last_order_id;
 
@@ -101,7 +102,7 @@ contract DEX is IDEX, IAccount, Ownable {
         return PairOrders[pair_name][OrderType.SELL];
     }
 
-    //function fetchUserOrders(string calldata pair_name) external view returns(Order[] memory);
+    // function fetchUserOrders(string calldata pair_name) external view returns(Order[] memory);
 
 
     // user functions
@@ -139,6 +140,7 @@ contract DEX is IDEX, IAccount, Ownable {
 
             emit OrderCompleted(o.id, pair_name, msg.sender, o.creator, amount_, o.price);
 
+            delete AllOrders[o.id];
             orderList.pop();
             ordersLength--;
         }
@@ -155,14 +157,16 @@ contract DEX is IDEX, IAccount, Ownable {
         lockedBalances[p.second_token_addr][msg.sender] += spentAmount;
         last_order_id++;
         Order[] storage orderList = PairOrders[pair_name][OrderType.BUY];
-        orderList.push(Order({
+        Order memory new_order = Order({
             id: last_order_id,
             pair_name: pair_name,
             amount: amount,
             price: price,
             creator: msg.sender,
             orderType: OrderType.BUY
-        }));
+        });
+        orderList.push(new_order);
+        AllOrders[last_order_id] = new_order;
 
         unchecked {
             for (uint i = orderList.length; i > 1; --i) {
@@ -192,15 +196,16 @@ contract DEX is IDEX, IAccount, Ownable {
             require(_countBalance(p.first_token_addr, msg.sender) >= amount_, "Insufficient unlocked balance");
 
             remainingAmount -= amount_;
-            overallBalances[p.second_token_addr][msg.sender] += amount_;
-            overallBalances[p.first_token_addr][msg.sender] -= sellerPrice;
+            overallBalances[p.second_token_addr][msg.sender] += sellerPrice;
+            overallBalances[p.first_token_addr][msg.sender] -= amount_;
             
-            overallBalances[p.second_token_addr][o.creator] -= amount_;
-            lockedBalances[p.second_token_addr][o.creator] -= amount_;
-            overallBalances[p.first_token_addr][o.creator] += sellerPrice;
+            overallBalances[p.second_token_addr][o.creator] -= sellerPrice;
+            lockedBalances[p.second_token_addr][o.creator] -= sellerPrice;
+            overallBalances[p.first_token_addr][o.creator] += amount_;
 
             emit OrderCompleted(o.id, pair_name, o.creator, msg.sender, amount_, o.price);
 
+            delete AllOrders[o.id];
             orderList.pop();
             ordersLength--;
         }
@@ -216,14 +221,16 @@ contract DEX is IDEX, IAccount, Ownable {
         lockedBalances[p.first_token_addr][msg.sender] += amount;
         last_order_id++;
         Order[] storage orderList = PairOrders[pair_name][OrderType.SELL];
-        orderList.push(Order({
+        Order memory new_order = Order({
             id: last_order_id,
             pair_name: pair_name,
             amount: amount,
             price: price,
             creator: msg.sender,
             orderType: OrderType.SELL
-        }));
+        });
+        orderList.push(new_order);
+        AllOrders[last_order_id] = new_order;
 
         unchecked {
             for (uint i = orderList.length; i > 1; --i) {
@@ -240,7 +247,29 @@ contract DEX is IDEX, IAccount, Ownable {
     }
 
     function deleteOrder(uint id) external {
+        Order storage o = AllOrders[id];
+        require(o.creator == msg.sender, "You'are not the order creator");
+        Order[] storage orders = PairOrders[o.pair_name][o.orderType];
 
+        unchecked {
+            uint i;
+            bool found;
+            for (; i < orders.length; ++i) {
+                if (orders[i].id == o.id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) revert("Corrupt!");
+
+            for (; i < orders.length-1; ++i) {
+                Order storage tmp = orders[i];
+                orders[i] = orders[i+1];
+                orders[i+1] = tmp;
+            }
+            orders.pop();
+            delete AllOrders[id];
+        }
     }
 
 

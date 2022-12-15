@@ -27,5 +27,4 @@ interface IDEX is IDEXStructs {
     function sellOrderMarket(string calldata pair_name, uint amount) external;
     function sellOrderLimit(string calldata pair_name, uint amount, uint price) external;
     function deleteOrder(uint id) external;
-
 }

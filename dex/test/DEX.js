@@ -110,17 +110,58 @@ describe("DEX", function () {
       await expect(order[4]).to.equal(user2.address);
       await expect(order[5]).to.equal(0);
       await expect((await dex.balanceOf(atk.address, user2.address))).to.equal("996633");
-/*
-      // buy 100 MTK buy market price
-      await dex.connect(user2).buyOrderMarket("MTKDAI", "100");
-      sellOrders = await dex.fetchSellOrders("MTKDAI");
-      await expect(sellOrders.length).to.equal(0);
-      await expect((await dex.balanceOf(mtk.address, user2.address))).to.equal("100");
-      await expect((await dex.balanceOf(dai.address, user2.address))).to.equal("996667");
+
+      // sell 100 MTK buy market price
+      await dex.connect(user1).sellOrderMarket("MTKATK", "100");
+      buyOrders = await dex.fetchBuyOrders("MTKATK");
+      await expect(buyOrders.length).to.equal(0);
       await expect((await dex.balanceOf(mtk.address, user1.address))).to.equal("999900");
-      await expect((await dex.balanceOf(dai.address, user1.address))).to.equal("1003333");
-      */
+      await expect((await dex.balanceOf(atk.address, user1.address))).to.equal("3367");
+      await expect((await dex.balanceOf(mtk.address, user2.address))).to.equal("100");
+      await expect((await dex.balanceOf(atk.address, user2.address))).to.equal("996633");
     });
+
+    it("[MTKATK, MTKDAI] user2 creates 2 orders and deletes them", async function() {
+      await dex.connect(user2).buyOrderLimit("MTKATK", "100", "336767");
+      await dex.connect(user1).sellOrderLimit("MTKDAI", "100", "3333");
+      var ordersMTKATK = await dex.fetchBuyOrders("MTKATK");
+      var ordersMTKDAI = await dex.fetchSellOrders("MTKDAI");
+      await expect(ordersMTKATK.length).to.equal(1);
+      await expect(ordersMTKDAI.length).to.equal(1);
+      await dex.connect(user2).deleteOrder(ordersMTKATK[0].id);
+      await dex.connect(user1).deleteOrder(ordersMTKDAI[0].id);
+      var ordersMTKATK = await dex.fetchBuyOrders("MTKATK");
+      var ordersMTKDAI = await dex.fetchSellOrders("MTKDAI");
+      await expect(ordersMTKATK.length).to.equal(0);
+      await expect(ordersMTKDAI.length).to.equal(0);
+    });
+  });
+
+  describe("Test multiple orders in a pair", function() {
+    beforeEach(async function() {
+      let data = await loadFixture(deployDEX);
+      dex = data.dex; mtk = data.mtk; dai = data.dai;
+      atk = data.atk; user1 = data.user1; user2 = data.user2;
+      await dex.addPair("MTKDAI", mtk.address, dai.address, "2");
+      await dex.addPair("ATKDAI", atk.address, atk.address, "2");
+      await dex.addPair("MTKATK", mtk.address, atk.address, "4");
+
+      await dai.connect(user1).approve(dex.address, "1000000");
+      await dai.connect(user2).approve(dex.address, "1000000");
+      await mtk.connect(user1).approve(dex.address, "1000000");
+      await atk.connect(user2).approve(dex.address, "1000000");
+      await dex.connect(user1).deposit(dai.address, "1000000");
+      await dex.connect(user2).deposit(dai.address, "1000000");
+      await dex.connect(user1).deposit(mtk.address, "1000000");
+      await dex.connect(user2).deposit(atk.address, "1000000");
+
+      for (var i = 0; i < 10; i++) {
+        await dex.connect(user1).sellOrderLimit("MTKDAI", "137", i * 1000 + 1337);
+        await dex.connect(user2).buyOrderLimit("MTKDAI", "137", i * 137 + 1337);
+        await dex.connect(user1).buyOrderLimit("ATKDAI", "123", i * 13 + 1234);
+      }
+    });
+
 
   });
 });
