@@ -102,7 +102,6 @@ contract DEX is IDEX, IAccount, Ownable {
         return PairOrders[pair_name][OrderType.SELL];
     }
 
-    // function fetchUserOrders(string calldata pair_name) external view returns(Order[] memory);
 
 
     // user functions
