@@ -1,10 +1,11 @@
 // ids
 // let ...
 
-var metamaskConnected = false;
+if (!contract_addr || !abi || !chainId) {
+    alert("Error! ChainID, ABI or contract address isn't set");
+}
 
-const contract_addr = document.getElementById("sol_addr").value;
-const chainId = document.getElementById("chain_id").value;
+var metamaskConnected = false;
 
 let contract = undefined;
 let web3 = undefined;

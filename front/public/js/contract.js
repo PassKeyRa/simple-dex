@@ -1,3 +1,4 @@
+const chainId = 97;
 const contract_addr = '0xF1115c997DDbed20866932B095E7271b234fc1FB';
 const abi = [
     {
