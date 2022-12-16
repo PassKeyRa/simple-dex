@@ -359,7 +359,7 @@ async function deleteOrder() {
         let id = document.querySelector(id_del_order_id).value;
         if (!id) return false
         contract.methods.deleteOrder(id).send({from: account})
-            .then(async () => {alert('OK!');})
+            .then(async () => {alert('OK!'); await listOrders();})
             .catch((err) => {alert(err.stack)});
     }
 }
