@@ -31,8 +31,16 @@ ATK deployed at 0x03E8e11732669A1051a5496e1ca4e83Bf605Df50
 This is the directory with frontend part. You can run it with:
 
 ```
+cd ./front
 yarn
 node index.js
+```
+
+Or using docker:
+
+```
+docker build -t simple-dex .
+docker run -d -p 8888:8888 simple-dex
 ```
 
 After that, go to `http://<ip>:8888/` and use the DEX!
