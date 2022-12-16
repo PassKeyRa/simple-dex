@@ -25,3 +25,14 @@ DAI deployed at 0x924E1413f6093FB833DE4c446eb41eF09CB54Bdd
 MTK deployed at 0x0ab8386c436612866Da9804f60Bb15FA14257746
 ATK deployed at 0x03E8e11732669A1051a5496e1ca4e83Bf605Df5
 ```
+
+## ./front
+
+This is the directory with frontend part. You can run it with:
+
+```
+yarn
+node index.js
+```
+
+After that, go to `http://<ip>:8888/` and use the DEX!
