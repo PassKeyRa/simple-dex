@@ -112,10 +112,23 @@ async function priceEncode(p) {
     return `${Math.floor(parseFloat(p) * (10 ** decimals))}`
 }
 
+let MAX_ORDERS = 10;
+let id_order_list = "#order_list"
 async function listOrders() {
     var buy_orders = await fetchBuyOrders();
     var sell_orders = await fetchSellOrders();
+    sell_orders = sell_orders.slice(-MAX_ORDERS);
+    buy_orders = buy_orders.slice(-MAX_ORDERS).reverse();
 
+    html = ''
+    for (var i = 0; i < sell_orders.length; i++) {
+        // html += '<sell order red>'
+    }
+
+    for (var i = 0; i < buy_orders.length; i++) {
+        // html += '<buy order green>'
+    }
+    document.querySelector(id_order_list).innerHTML = html;
 }
 
 
@@ -268,11 +281,36 @@ async function deleteOrder() {
 
 
 
-let id_deposit_token = "#deposit_token"
-let id_deposit_amount = "#deposit_amount"
+let id_token = "#token"
+let id_amount = "#amount"
+
 async function deposit() {
     if (checkConnected()) {
-        let token = document.querySelector(id_deposit_token).value;
-        let amount = document.querySelector(id_deposit_amount).value;
+        let token = document.querySelector(id_token).value;
+        let amount = document.querySelector(id_amount).value;
+        if (!token || !amount) return undefined
+        contract.methods.deposit(token, amount).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+async function withdraw() {
+    if (checkConnected()) {
+        let token = document.querySelector(id_token).value;
+        let amount = document.querySelector(id_amount).value;
+        if (!token || !amount) return undefined
+        contract.methods.withdraw(token, amount).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+async function balanceOf() {
+    if (checkConnected()) {
+        let token = document.querySelector(id_token).value;
+        if (!token) return undefined
+        let balance = contract.methods.balanceOf(token, account).call();
+        return balance;
     }
 }
