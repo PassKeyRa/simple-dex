@@ -4,7 +4,7 @@
 
 * Ksenia Kudasheva
 
-This a Simple DEX implementation project for the Inno Blockchain course
+This is a Simple DEX implementation project for the Inno Blockchain course. You can find the frontend hosted here: http://revbase.tk:8888/ (if still hosted)
 
 ## ./dex
 
