@@ -69,23 +69,28 @@ html {
   padding: 40px;
 }
 
-.main-column {
-  background-color: rgb(25, 92, 138);
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-top: 10px;
-  padding: 10px;
-  color: rgb(69, 69, 69);
-  font-size: 18px;
+.middle-container {
+  text-align: center;
+  font-size: 30px;
+  margin: 50px;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  background-color: rgb(220, 236, 241);
+}
+
+.middle-container button {
+  font-size: 35px;
+  padding-top: 10px;
 }
 
 .container {
   background-color: rgb(220, 236, 241);
   border-radius: 5px;
-  padding: 10px;
-  margin: 10px;
-  width: 45%;
   float: left;
+  width: 45%;
+  padding-bottom: 10px;
+  margin-right: 2.5%;
+  margin-left: 2.5%;
 }
 
 .container h1 {
@@ -94,31 +99,43 @@ html {
 }
 
 .container h2 {
-  padding-left: 20px;
+  padding-left: 3%;
   font-size: 40px;
 }
 
-.container h3 {
+h3 {
   padding-left: 20px;
   font-size: 30px;
   line-height: 40px;
 }
 
-.container button.fancy-btn {
+button.fancy-btn,
+button.fancy-btn-balance {
   background-color: rgb(235, 88, 3);
   font-size: 40px;
   color: white;
   text-align: center;
-  width: 50%;
+  width: 45%;
   margin-left: 25%;
+  margin-top: 30px;
+  margin-bottom: 30px;
   height: 80px;
   border: none;
   border-radius: 15px;
   font-family: "Mulish", sans-serif;
 }
 
-.container button.fancy-btn:hover {
+.btm {
+  margin-bottom: 3%;
+}
+
+button.fancy-btn:hover,
+button.fancy-btn-balance:hover {
   background-color: rgb(245, 138, 77);
+}
+button.fancy-btn-balance {
+  margin-bottom: 5%;
+  height: 100px;
 }
 
 .messages:after {
@@ -127,12 +144,26 @@ html {
   clear: both;
 }
 
+.big-row {
+  background-color: rgb(220, 236, 241);
+}
+
+.row {
+  width: 100%;
+}
+
+.row label {
+  font-size: 30px;
+}
+
 .column {
   float: left;
 }
 
 .left {
   width: 15%;
+  font-size: 35px;
+  padding-left: 5%;
 }
 
 .right {
@@ -143,6 +174,7 @@ html {
   font-size: 30px;
   border: rgb(255, 255, 255);
   background-color: rgb(255, 255, 255);
+  float: right;
 }
 
 .row:after {
@@ -174,8 +206,8 @@ html {
 }
 
 .dropbtn {
-  background-color: rgb(25, 92, 138);
-  color: white;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   border-radius: 10px;
   font-size: 30px;
   font-family: "Mulish", sans-serif;
@@ -185,8 +217,8 @@ html {
 .dropdown {
   position: relative;
   display: inline-block;
-  background-color: rgb(25, 92, 138);
-  color: white;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   border-radius: 10px;
   font-size: 30px;
 }
@@ -215,6 +247,119 @@ html {
   display: block;
 }
 
-.dropdown:hover .dropbtn {
+.bottom-column {
+  float: left;
+  width: 20%;
+  font-size: 30px;
+  margin-top: 15px;
+}
+
+.sell {
+  background-color: #ff8a8a;
+}
+
+.buy {
+  background-color: #b5f7ba;
+}
+
+.bottom-column-head {
+  font-weight: bold;
+  font-size: 40px;
+  float: left;
+  width: 20%;
+  background-color: rgb(22, 32, 52);
+  color: white;
+}
+
+/* Clear floats after the columns */
+.bottom-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.check {
+  display: block;
+  position: relative;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 30px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.check input {
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  height: 40px;
+  width: 40px;
   background-color: rgb(25, 92, 138);
+  border-radius: 25%;
+}
+
+.check:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.check input:checked ~ .checkmark {
+  background-color: rgb(235, 88, 3);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.check input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.check .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 0%;
+  background: white;
+}
+
+.column-price {
+  width: 60%;
+  padding: 10px;
+  margin-right: 20px;
+  margin-top: -1%;
+  border-radius: 5px;
+  font-size: 30px;
+  border: rgb(255, 255, 255);
+  background-color: rgb(255, 255, 255);
+  float: right;
+}
+
+.button-column-left {
+  float: left;
+  width: 45%;
+  font-size: 35px;
+  padding-left: 5%;
+}
+
+.button-column-right {
+  float: right;
+  width: 45%;
+  font-size: 35px;
+  padding-left: 5%;
+}
+
+.button-row:after {
+  content: "";
+  display: table;
+  clear: both;
 }

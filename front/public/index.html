@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+
+  <title>Amazing DEX</title>
+
+  <link rel="stylesheet" href="css/style1.css" />
+</head>
+
+<body>
+  <div class="header">
+    <div class="header-left">
+      <a>
+        <img src="img/logo_120.png" height="90px" />
+      </a>
+      <a class="project-name">Amazing DEX</a>
+    </div>
+
+    <div class="header-right">
+      <a class="active" href="admin.html">Giga Admin</a>
+      <a class="active" href="index.html">Virgin User</a>
+      <a class="active-address" id="bsc_address"></a>
+      <a class="active-connect" onclick="connectMetamask()" id="connect_button">Connect Metamask</a>
+    </div>
+  </div>
+
+  <!-- <div class="big-container"> -->
+  <!-- <div class="big-row"> -->
+  <div class="middle-container">
+    <div class="row">
+      <div class="column left">
+        <h3>Choose pair</h3>
+      </div>
+      <div class="column right dropdown">
+        <button class="dropbtn" id="pair_name">Choose me right here</button>
+        <div id="pair_list" class="dropdown-content">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+
+  <div class="big-row">
+    <div class="container">
+      <h1><strong>Create order</strong></h1>
+      <!-- <h2>First token</h2> -->
+      <div class="row">
+        <div class="column left">
+          <h3>Amount</h3>
+        </div>
+        <input id="order_amount" type="name" placeholder="enter amount" class="column right" required />
+      </div>
+      <div class="row">
+        <div class="column left">
+          <h3>Price</h3>
+        </div>
+        <t></t><br />
+        <label class="check">Market price
+          <input type="checkbox" class="check-highload" id="check_market" onclick="checkChange(0)" />
+          <span class="checkmark"></span>
+        </label>
+        <label class="check">Your price
+          <input type="checkbox" class="check-highload" id="check_limit" onclick="checkChange(1)" />
+          <span class="checkmark"></span>
+        </label>
+        <input id="order_price_input" type="name" placeholder="enter price" class="column right" disabled required />
+      </div>
+
+      <div class="button-row">
+        <div class="button-column-left">
+          <button class="fancy-btn" onclick="processBuyOrder()">Buy</button>
+        </div>
+        <div class="button-column-right">
+          <button class="fancy-btn" onclick="processSellOrder()">Sell</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Delete order</h1>
+      <div class="row">
+        <div class="column left">
+          <h3>Order ID</h3>
+        </div>
+        <input type="name" placeholder="enter id" class="column right" required />
+        <button class="fancy-btn">Delete order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARNING     -->
+  <!-- dont delete me pls -->
+  <div class="middle-container">
+    <div class="row"></div>
+    <!-- WARNING     -->
+  </div>
+  <!-- WARNING     -->
+
+  <div class="big-row">
+    <div class="container">
+      <h1><strong>Account operations</strong></h1>
+      <div class="row">
+        <div class="column left">
+          <h3>Token Address</h3>
+        </div>
+        <input id="token" type="name" placeholder="enter address" class="column right" required />
+      </div>
+      <div class="row">
+        <div class="column left" style="width: 30%">
+          <h3 id="token_balance">Balance here!</h3>
+        </div>
+        <div class="button-column-right">
+          <button class="fancy-btn-balance" onclick="balanceOf()">Check Balance</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1><strong><br></strong></h1>
+      <div class="row">
+        <div class="column left">
+          <h3>Amount</h3>
+        </div>
+        <input id="amount" type="name" placeholder="enter amount" class="column right" required />
+      </div>
+      <div class="button-row">
+        <div class="button-column-left">
+          <button class="fancy-btn btm" onclick="deposit()">Deposit</button>
+        </div>
+        <div class="button-column-right">
+          <button class="fancy-btn btm" onclick="withdraw()">Withdraw</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARNING     -->
+  <!-- dont delete me pls -->
+  <div class="middle-container">
+    <div class="row"></div>
+    <!-- WARNING     -->
+  </div>
+  <!-- WARNING     -->
+
+  <div class="middle-container">
+    <div class="row">
+      <div class="bottom-column-head" style="width: 15%">Order ID</div>
+      <div class="bottom-column-head" style="width: 25%">User</div>
+      <div class="bottom-column-head">Price</div>
+      <div class="bottom-column-head">Amount</div>
+      <div class="bottom-column-head">Type</div>
+    </div>
+    <span id="order_list">
+      <!--div class="row">
+        <div class="bottom-column" style="width: 15%">1337</div>
+        <div class="bottom-column" style="width: 25%">0x13371337133713371377131373</div>
+        <div class="bottom-column">0.15</div>
+        <div class="bottom-column">228</div>
+        <div class="bottom-column sell">Sell</div>
+      </div>
+      <div class="row">
+        <div class="bottom-column" style="width: 15%">1338</div>
+        <div class="bottom-column" style="width: 25%">0x133713371337546134646371377131373</div>
+        <div class="bottom-column">0.1555</div>
+        <div class="bottom-column">1408</div>
+        <div class="bottom-column buy">Buy</div>
+      </div-->
+    </span>
+  </div>
+
+  <!-- </div> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.1/web3.min.js" type="text/javascript"></script>
+  <script src="js/contract.js"></script>
+  <script src="js/DEX.js"></script>
+</body>
+
+</html>

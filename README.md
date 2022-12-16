@@ -23,7 +23,7 @@ Currently the contracts are deployed at the following addresses in BSC testnet:
 DEX deployed at 0xF1115c997DDbed20866932B095E7271b234fc1FB
 DAI deployed at 0x924E1413f6093FB833DE4c446eb41eF09CB54Bdd
 MTK deployed at 0x0ab8386c436612866Da9804f60Bb15FA14257746
-ATK deployed at 0x03E8e11732669A1051a5496e1ca4e83Bf605Df5
+ATK deployed at 0x03E8e11732669A1051a5496e1ca4e83Bf605Df50 
 ```
 
 ## ./front
