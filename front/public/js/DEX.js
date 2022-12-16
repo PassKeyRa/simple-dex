@@ -95,6 +95,29 @@ async function changePair(name) {
     pair_field.innerHTML = name;
 }
 
+async function getDecimals() {
+    var pair = await getPair();
+    if (!pair) return undefined;
+    var decimals = parseInt(pair.price_decimals);
+    return decimals;
+}
+
+async function priceDecode(p) {
+    var decimals = await getDecimals();
+    return `${parseFloat(p) / (10 ** decimals)}`
+}
+
+async function priceEncode(p) {
+    var decimals = await getDecimals();
+    return `${Math.floor(parseFloat(p) * (10 ** decimals))}`
+}
+
+async function listOrders() {
+    var buy_orders = await fetchBuyOrders();
+    var sell_orders = await fetchSellOrders();
+
+}
+
 
 
 /* DEX functions */
@@ -116,16 +139,18 @@ async function addPair() {
 
 let id_owner_del_pair_name = "#pair_name"
 async function deletePair() {
-    let name = document.querySelector(id_owner_del_pair_name).innerHTML;
-    if (name == "Choose me right here") return;
-    contract.methods.deletePair(name).send({from: account})
-      .then(async () => {
-            alert('OK!'); 
-            await updatePairs();
-            document.querySelector(id_owner_del_pair_name).innerHTML = "Choose me right here";
-            document.querySelector(id_pair_list).innerHTML = "";
-        })
-      .catch((err) => {alert(err.stack)});
+    if (checkConnected()) {
+        let name = document.querySelector(id_owner_del_pair_name).innerHTML;
+        if (name == "Choose me right here") return;
+        contract.methods.deletePair(name).send({from: account})
+        .then(async () => {
+                alert('OK!'); 
+                await updatePairs();
+                document.querySelector(id_owner_del_pair_name).innerHTML = "Choose me right here";
+                document.querySelector(id_pair_list).innerHTML = "";
+            })
+        .catch((err) => {alert(err.stack)});
+    }
 }
 
 
@@ -137,11 +162,117 @@ async function fetchPairs() {
     return [];
 }
 
-async function getPait() {}
-async function fetchBuyOrders() {}
-async function fetchSellOrders() {}
-async function buyOrderMarket() {}
-async function buyOrderLimit() {}
-async function sellOrderMarket() {}
-async function sellOrderLimit() {}
-async function deleteOrder() {}
+let id_get_pair_name = "#pair_name"
+async function getPair() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_get_pair_name).innerHTML;
+        if (name == "Choose me right here") return undefined;
+        var pair = await contract.methods.getPair(name).call();
+        return pair;
+    }
+    return undefined;
+}
+
+let id_fetch_buy_orders_pair_name = "#pair_name"
+async function fetchBuyOrders() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_fetch_buy_orders_pair_name).innerHTML;
+        if (name == "Choose me right here") return undefined;
+        var buy_orders = await contract.methods.fetchBuyOrders(name).call();
+        return buy_orders;
+    }
+    return [];
+}
+
+let id_fetch_sell_orders_pair_name = "#pair_name"
+async function fetchSellOrders() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_fetch_sell_orders_pair_name).innerHTML;
+        if (name == "Choose me right here") return undefined;
+        var buy_orders = await contract.methods.fetchSellOrders(name).call();
+        return buy_orders;
+    }
+    return [];
+}
+
+
+
+let id_order_pair_name = "#pair_name"
+
+let id_buy_market_amount = "#buy_market_amount"
+async function buyOrderMarket() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_order_pair_name).innerHTML;
+        let amount = document.querySelector(id_buy_market_amount).value;
+        if (!name || !amount) return false
+        contract.methods.buyOrderMarket(name, amount).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+let id_buy_limit_amount = "#buy_limit_amount"
+let id_buy_limit_price = "#buy_limit_price"
+async function buyOrderLimit() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_order_pair_name).innerHTML;
+        let amount = document.querySelector(id_buy_limit_amount).value;
+        let price = document.querySelector(id_buy_limit_price).value;
+        if (!name || !amount || !price) return false
+        price = await priceEncode(price);
+        if (price == "NaN") return undefined;
+        contract.methods.buyOrderLimit(name, amount, price).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+let id_sell_market_amount = "#sell_market_amount"
+async function sellOrderMarket() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_order_pair_name).innerHTML;
+        let amount = document.querySelector(id_sell_market_amount).value;
+        if (!name || !amount) return false
+        contract.methods.sellOrderMarket(name, amount).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+let id_sell_limit_amount = "#sell_limit_amount"
+let id_sell_limit_price = "#sell_limit_price"
+async function sellOrderLimit() {
+    if (checkConnected()) {
+        let name = document.querySelector(id_order_pair_name).innerHTML;
+        let amount = document.querySelector(id_sell_limit_amount).value;
+        let price = document.querySelector(id_sell_limit_price).value;
+        if (!name || !amount || !price) return false
+        price = await priceEncode(price);
+        if (price == "NaN") return undefined;
+        contract.methods.sellOrderLimit(name, amount, price).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+let id_del_order_id = "#del_order_id"
+async function deleteOrder() {
+    if (checkConnected()) {
+        let id = document.querySelector(id_del_order_id).value;
+        if (!id) return false
+        contract.methods.deleteOrder(id).send({from: account})
+            .then(async () => {alert('OK!');})
+            .catch((err) => {alert(err.stack)});
+    }
+}
+
+
+
+let id_deposit_token = "#deposit_token"
+let id_deposit_amount = "#deposit_amount"
+async function deposit() {
+    if (checkConnected()) {
+        let token = document.querySelector(id_deposit_token).value;
+        let amount = document.querySelector(id_deposit_amount).value;
+    }
+}
