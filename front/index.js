@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const SERVER_PORT   = process.env.SERVER_PORT || 8888;
-const SERVER_ADDR   = process.env.SERVER_ADDR || '127.0.0.1';
+const SERVER_ADDR   = process.env.SERVER_ADDR || '0.0.0.0';
 
 app.use("/", express.static(__dirname + "/public"));
 
